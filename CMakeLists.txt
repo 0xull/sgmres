@@ -28,7 +28,10 @@ elseif(MSVC)
   target_compile_options(sgmres_options INTERFACE /W4)
 endif()
 
-add_library(sgmres src/problems.cpp)
+add_library(sgmres
+  src/arnoldi.cpp
+  src/problems.cpp
+)
 target_include_directories(sgmres PUBLIC include)
 target_link_libraries(sgmres PUBLIC Eigen3::Eigen PRIVATE sgmres_options)
 
@@ -37,7 +40,12 @@ target_link_libraries(inspect PRIVATE sgmres sgmres_options)
 
 include(CTest)
 if(BUILD_TESTING)
-  add_executable(problems_test tests/problems_test.cpp)
-  target_link_libraries(problems_test PRIVATE sgmres sgmres_options)
-  add_test(NAME problems COMMAND problems_test)
+  function(sgmres_test name)
+    add_executable(${name}_test tests/${name}_test.cpp)
+    target_link_libraries(${name}_test PRIVATE sgmres sgmres_options)
+    add_test(NAME ${name} COMMAND ${name}_test)
+  endfunction()
+
+  sgmres_test(problems)
+  sgmres_test(arnoldi)
 endif()

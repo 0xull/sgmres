@@ -1,22 +1,9 @@
 #include "sgmres/problems.hpp"
 
 #include <cmath>
-#include <cstdio>
+#include "check.hpp"
 
 namespace {
-
-int failures = 0;
-
-#define CHECK(cond)                                                                 \
-  do {                                                                              \
-    if (!(cond)) {                                                                  \
-      std::fprintf(stderr, "%s:%d: CHECK(%s) failed\n", __FILE__, __LINE__, #cond); \
-      ++failures;                                                                   \
-    }                                                                               \
-  } while (0)
-
-#define CHECK_NEAR(a, b, tol) CHECK(std::abs((a) - (b)) <= (tol))
-
 bool is_symmetric(const sgmres::SparseMatrix& a) {
   const sgmres::SparseMatrix at = a.transpose();
   return (a - at).norm() == 0.0;
@@ -78,10 +65,5 @@ int main() {
   convection_diffusion();
   random_vectors();
 
-  if (failures != 0) {
-    std::fprintf(stderr, "%d check(s) failed\n", failures);
-    return 1;
-  }
-  std::puts("all checks passed");
-  return 0;
+  return sgmres::test::finish();
 }
