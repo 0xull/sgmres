@@ -30,6 +30,7 @@ endif()
 
 add_library(sgmres
   src/arnoldi.cpp
+  src/gmres.cpp
   src/problems.cpp
 )
 target_include_directories(sgmres PUBLIC include)
@@ -48,4 +49,5 @@ if(BUILD_TESTING)
 
   sgmres_test(problems)
   sgmres_test(arnoldi)
+  sgmres_test(gmres)
 endif()
