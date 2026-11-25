@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <string_view>
 
 #include "sgmres/types.hpp"
 
@@ -16,6 +17,10 @@ SparseMatrix laplacian_2d(Index m);
 // laplacian_2d plus an extra -convection on each east neighbour, which breaks symmetry, plus
 // shift * I. A shift of 1 moves the spectrum away from zero and makes GMRES converge quickly.
 SparseMatrix convection_diffusion_2d(Index m, double convection, double shift = 0.0);
+
+// One of the matrices above by name, plus shift * I. size is n for "tridiag" and the grid side m
+// for "laplacian" and "convdiff". Throws std::invalid_argument for any other name.
+SparseMatrix make_problem(std::string_view name, Index size, double shift = 0.0);
 
 // Entries drawn from N(0, 1). Fixed seeds keep runs comparable across solvers.
 Vector random_normal(Index n, std::uint64_t seed);

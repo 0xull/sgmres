@@ -39,6 +39,9 @@ target_link_libraries(sgmres PUBLIC Eigen3::Eigen PRIVATE sgmres_options)
 add_executable(inspect apps/inspect.cpp)
 target_link_libraries(inspect PRIVATE sgmres sgmres_options)
 
+add_executable(solve apps/solve.cpp)
+target_link_libraries(solve PRIVATE sgmres sgmres_options)
+
 include(CTest)
 if(BUILD_TESTING)
   function(sgmres_test name)

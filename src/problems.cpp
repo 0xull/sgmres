@@ -1,6 +1,8 @@
 #include "sgmres/problems.hpp"
 
 #include <random>
+#include <stdexcept>
+#include <string>
 #include <vector>
 
 namespace sgmres {
@@ -54,6 +56,26 @@ SparseMatrix laplacian_2d(Index m) { return five_point(m, 4.0, -1.0); }
 
 SparseMatrix convection_diffusion_2d(Index m, double convection, double shift) {
   return five_point(m, 4.0 + shift, -1.0 - convection);
+}
+
+SparseMatrix make_problem(std::string_view name, Index size, double shift) {
+  SparseMatrix a;
+  if (name == "tridiag")
+    a = tridiagonal(size, -1.0, 3.0, 1.0);
+  else if (name == "laplacian")
+    a = laplacian_2d(size);
+  else if (name == "convdiff")
+    a = convection_diffusion_2d(size, 0.5);
+  else
+    throw std::invalid_argument("unknown problem: " + std::string(name));
+
+  if (shift != 0.0) {
+    SparseMatrix identity(a.rows(), a.cols());
+    identity.setIdentity();
+    a += shift * identity;
+  }
+
+  return a;
 }
 
 Vector random_normal(Index n, std::uint64_t seed) {

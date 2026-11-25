@@ -3,6 +3,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <stdexcept>
 #include <string_view>
 
 #include "sgmres/problems.hpp"
@@ -36,13 +37,9 @@ int main(int argc, char** argv) {
   }
 
   sgmres::SparseMatrix a;
-  if (problem == "tridiag") {
-    a = sgmres::tridiagonal(size, -1.0, 3.0, 1.0);
-  } else if (problem == "laplacian") {
-    a = sgmres::laplacian_2d(size);
-  } else if (problem == "convdiff") {
-    a = sgmres::convection_diffusion_2d(size, 0.5);
-  } else {
+  try {
+    a = sgmres::make_problem(problem, size);
+  } catch (const std::invalid_argument&) {
     usage(argv[0]);
     return 2;
   }

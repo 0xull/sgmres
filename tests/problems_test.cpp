@@ -1,6 +1,8 @@
 #include "sgmres/problems.hpp"
 
 #include <cmath>
+#include <stdexcept>
+
 #include "check.hpp"
 
 namespace {
@@ -44,6 +46,20 @@ void convection_diffusion() {
   CHECK(shifted.coeff(5, 5) == 5.0);
 }
 
+void named_problems() {
+  CHECK(sgmres::make_problem("tridiag", 8).nonZeros() == 22);
+  CHECK(sgmres::make_problem("convdiff", 4, 1.0).coeff(5, 5) == 5.0);
+
+  bool threw = false;
+  try {
+    sgmres::make_problem("poisson", 4);
+  } catch (const std::invalid_argument&) {
+    threw = true;
+  }
+
+  CHECK(threw);
+}
+
 void random_vectors() {
   const sgmres::Vector a = sgmres::random_normal(100000, 7);
   const sgmres::Vector b = sgmres::random_normal(100000, 7);
@@ -63,6 +79,7 @@ int main() {
   hand_example();
   laplacian();
   convection_diffusion();
+  named_problems();
   random_vectors();
 
   return sgmres::test::finish();
